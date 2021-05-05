@@ -17,7 +17,7 @@
             新世代による基本問題実力No.1決定戦として名高いクイズ大会「abc」をPython上でシミュレートするプロジェクト
             <a href="https://github.com/NMLibrary/vbc" target='_blank' rel='noopener noreferrer'>「vbc」</a>に刺激を受け、
             ほぼ同じロジックでWebブラウザ上に大胆シミュレート。<br />
-            参加者のデータを用意するだけで、abcが目の前に。
+            参加者のデータを用意するだけで、abcの熱戦が目の前に。
           </p>
           <p>
             クイズ大会「abc」については<a href="https://abc-dive.com/portal/" target='_blank' rel='noopener noreferrer'>こちら</a>

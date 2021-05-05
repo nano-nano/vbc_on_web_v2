@@ -5,7 +5,7 @@
   <div class="ui vertical footer segment">
     <div class="ui divider" />
     <div class="ui stackable text container center" style="width: fit-content;">
-      (c) 2021 Nano-Nano
+      (c) 2020 Nano-Nano
       <span>
         Twitter: 
         <a href='https://twitter.com/nano2_aloerina' target='_blank' rel='noopener noreferrer'>@nano2_aloerina</a>

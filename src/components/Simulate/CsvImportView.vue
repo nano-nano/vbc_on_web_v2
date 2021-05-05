@@ -17,7 +17,7 @@
       <div class="ui top attached label">読み込み済みファイル</div>
       <div>
         <p>{{ state.importFileName }}</p>
-        <div class="ui button negative fluid" @click="onFileClear">クリア</div>
+        <div class="ui button negative fluid" @click="onFileClear">結果をクリア</div>
       </div>
     </div>
 
