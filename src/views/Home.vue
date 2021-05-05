@@ -44,6 +44,7 @@
                 <p>順位,名前,知識量,早押し力,10○10×のコース希望値,Swedish 10のコース希望値,10 by 10のコース希望値,10 up-downのコース希望値,(option)所属</p>
                 <p>(option)所属 はvbc on Web独自の拡張要素です。未設定でも機能します。</p>
               </div>
+              <p>サンプルデータのCSVファイルは<a href="./sample_data.csv" target='_blank' rel='noopener noreferrer'>こちら</a>からダウンロードできます。</p>
             </div>
           </div>
 
