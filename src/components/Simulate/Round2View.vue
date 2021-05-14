@@ -4,7 +4,7 @@
       <div class="title" :class="{ active: state.isAccordionOpen }" @click="toggleAccordion">
         <i class="dropdown icon" />【Round 2: 連答つき５○２×】
       </div>
-      <div class="content" :class="{ active: state.isAccordionOpen }">
+      <div class="content fade" :class="{ active: state.isAccordionOpen }">
         <div v-for="(players, setIdx) in state.setList" :key="setIdx">
           <table class="ui compact table">
             <thead>
@@ -143,6 +143,7 @@ export default defineComponent({
       } 
 
       if (!state.isFinishSimulate) {
+        let roundLog = '【Round 2: 連答つき５○２×】\n';
         // セットごとに参加者（ペーパー勝ち抜け48人）を振り分け
         for(let i = 0; i < 48; i++) {
           const player = props.playerDataList[i];
@@ -157,10 +158,17 @@ export default defineComponent({
           let nLosedPlayer = 0;  // 敗退済み人数
           let currentCorrectPlayerIndex = -1; // 連答権持ちプレイヤーのindex
 
+          roundLog += `（第${i + 1}セット）`;
+          for (const player of setPlayers) {
+            roundLog += `[${player.name}]`;
+          }
+          roundLog += '\n';
+
           while (nWinnedPlayer < 5  && nLosedPlayer < 7) {
             const result = QuizResultUtils.operateQuiz(setPlayers);
             if (result.pushedPlayerIndex == -1) {
               // 問題スルー
+              roundLog += '（スルー）\n';
               continue;
             } else {
               const targetPlayer = setPlayers[result.pushedPlayerIndex];
@@ -170,14 +178,17 @@ export default defineComponent({
                 continue;
               }
 
+              roundLog += `${targetPlayer.name} `;
               if (result.isCorrected) {
                 // 正解した
                 if (result.pushedPlayerIndex == currentCorrectPlayerIndex) {
                   // 連答正解
+                  roundLog += `${AnswerState.CORRECT_DOUBLE} `;
                   targetStatus.points = Math.min(5, targetStatus.points + 2);
                   targetStatus.answered += AnswerState.CORRECT_DOUBLE;
                 } else {
                   // 通常正解
+                  roundLog += `${AnswerState.CORRECT} `;
                   targetStatus.points += 1;
                   targetStatus.answered += AnswerState.CORRECT;
                 }
@@ -186,11 +197,13 @@ export default defineComponent({
       
                 if (targetStatus.points == 5) {
                   // 勝ち抜け
+                  roundLog += `=> ${getWinState(nWinnedPlayer)}`;
                   targetStatus.status = getWinState(nWinnedPlayer);
                   nWinnedPlayer++;
                 }
               } else {
                 // 誤答した
+                roundLog += `${AnswerState.INCORRECT} `;
                 targetStatus.misses += 1;
                 targetStatus.answered += AnswerState.INCORRECT;
                 if (result.pushedPlayerIndex == currentCorrectPlayerIndex) {
@@ -200,10 +213,12 @@ export default defineComponent({
       
                 if (targetStatus.misses == 2) {
                   // 敗退
+                  roundLog += `=> ${WinnedState.LOSED}`;
                   targetStatus.status = WinnedState.LOSED;
                   nLosedPlayer++;
                 }
               }
+              roundLog += '\n';
             }
 
             if (nLosedPlayer == 7) {
@@ -224,10 +239,22 @@ export default defineComponent({
               }
             }
           }
+
+          // 勝ち抜けプレイヤーログ出力
+          const winnerPlayersName = setPlayers
+            .filter((player) => (player.r2Status.status != WinnedState.UNDEFINED && player.r2Status.status != WinnedState.LOSED))
+            .map((player) => player.name);
+          roundLog += '勝ち抜け ';
+          for (const name of winnerPlayersName) {
+            roundLog += `[${name}]`;
+          }
+          roundLog += '\n';
         }
         state.isAccordionOpen = true;
         state.isFinishSimulate = true;
-        context.emit('onFinishRound');
+
+        roundLog += '【Round 2: 連答つき５○２× おわり】\n';
+        context.emit('onFinishRound', roundLog);
       }
     });
 
@@ -245,4 +272,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.fade{
+  animation: fadeIn 0.5s;
+}
+@keyframes fadeIn {
+  0% { opacity: 0.0 }
+  100% { opacity: 1.0 }
+}
 </style>

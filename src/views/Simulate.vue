@@ -9,7 +9,7 @@
       <CsvImportView :isFileLoaded="state.isCsvFileLoaded" @onFileSelected="onImportFileSelected" />
       
       <div id="results" v-show="state.isCsvFileLoaded">
-        <Round2View :playerDataList="state.playerDataList" @onFinishRound="onFinishRoundSimulate(Rounds.ROUND_2)" />
+        <Round2View :playerDataList="state.playerDataList" @onFinishRound="onFinishRoundSimulate(Rounds.ROUND_2, $event)" />
       </div>
     </div>
   </div>
@@ -41,7 +41,7 @@ export default defineComponent({
       /** 参加者データ配列 */
       playerDataList: PlayerEntity[],
       /** 1問ログデータ格納用連想配列 */
-      vbcLogList: any[],
+      vbcLogList: { round: Rounds, log: string }[],
       /** Round2が終了したかどうか */
       isRound2Finished: boolean
     }>({
@@ -65,7 +65,8 @@ export default defineComponent({
       }
     }
 
-    const onFinishRoundSimulate = (round: Rounds) => {
+    const onFinishRoundSimulate = (round: Rounds, logStr: string) => {
+      state.vbcLogList.push({ round: round, log: logStr });
       switch (round) {
         case Rounds.ROUND_2:
           state.isRound2Finished = true;
