@@ -2,56 +2,49 @@
   <div>
     <div class="ui accordion styled fluid">
       <div class="title" :class="{ active: state.isAccordionOpen }" @click="toggleAccordion">
-        <i class="dropdown icon" />【Round 2: 連答つき５○２×】
+        <i class="dropdown icon" />【Round 3: Number 10】
       </div>
       <div class="content fade" :class="{ active: state.isAccordionOpen }">
-        <div v-for="(players, setIdx) in setList" :key="setIdx">
+        <div v-for="(course, idx) in courseOrder" :key="idx">
           <table class="ui compact table">
             <thead>
               <tr>
-                <th colspan="12">第{{ (setIdx + 1) }}セット</th>
+                <th colspan="5">コース{{ (idx + 1) }} : {{ course }}</th>
               </tr>
             </thead>
             <tbody>
               <!-- ペーパー順位 -->
               <tr class="center aligned">
-                <td v-for="(player, playerIdx) in players" :key="playerIdx">
+                <td v-for="(player, playerIdx) in getCoursePlayerList(course)" :key="playerIdx">
                   <small>{{ convertRankNumberToText(player) }}</small>
                 </td>
               </tr>
               <!-- 所属 -->
               <tr class="center aligned">
-                <td v-for="(player, playerIdx) in players" :key="playerIdx">
+                <td v-for="(player, playerIdx) in getCoursePlayerList(course)" :key="playerIdx">
                   <small>{{ player.belonging }}</small>
                 </td>
               </tr>
               <!-- 名前 -->
               <tr class="center aligned">
-                <td v-for="(player, playerIdx) in players" :key="playerIdx" :style="{ backgroundColor: getNamePlateColorCode(player) }">
+                <td v-for="(player, playerIdx) in getCoursePlayerList(course)" :key="playerIdx" :style="{ backgroundColor: getNamePlateColorCode(player) }">
                   <strong class="vertical-writing">{{ player.name }}</strong>
                 </td>
               </tr>
               <!-- 正誤記録 -->
               <tr class="center aligned">
-                <td v-for="(player, playerIdx) in players" :key="playerIdx">
-                  <small>{{ player.r2Status.answered }}</small>
+                <td v-for="(player, playerIdx) in getCoursePlayerList(course)" :key="playerIdx">
+                  <small>{{ player.r3Status.answered }}</small>
                 </td>
               </tr>
               <!-- 状態 -->
               <tr class="center aligned">
-                <td v-for="(player, playerIdx) in players" :key="playerIdx">
-                  <small :class="getWinnedStateLabelStyle(player.r2Status.status)">{{ player.r2Status.status }}</small>
+                <td v-for="(player, playerIdx) in getCoursePlayerList(course)" :key="playerIdx">
+                  <small :class="getWinnedStateLabelStyle(player.r3Status.status)">{{ player.r3Status.status }}</small>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-        <!-- 次点表示エリア -->
-        <div class="ui segment" v-if="props.playerDataList.length >= 49">
-          <p>
-            次点（49th）: {{ props.playerDataList[48].name }}
-            {{ props.playerDataList[48].belonging ? '【' + props.playerDataList[48].belonging + '】' : '' }}
-          </p>
         </div>
       </div>
     </div>
@@ -59,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, reactive } from 'vue';
+import { defineComponent, PropType, reactive } from 'vue';
 
 import { PlayerEntity } from '@/vbc-entity';
 import { NamePlateUtils, WinnedStateUtils } from '@/logic/common-logic';
@@ -70,35 +63,32 @@ const getWinnedStateLabelStyle = (state: string) => WinnedStateUtils.getWinnedSt
 
 export default defineComponent({
   props: {
-    playerDataList: {
+    courseOrder: {
+      type: Array,
+      required: true
+    },
+    priorityedPlayerDataList: {
       type: Array as PropType<PlayerEntity[]>,
       required: true
-    }
+    },
   },
   setup(props) {
     const state = reactive({
       /** Accordionが開いているかどうか */
-      isAccordionOpen: true,
-    });
-
-    const setList = computed(() => {
-      const result: PlayerEntity[][] = [[], [], [], []];
-      for(let i = 0; i < 48; i++) {
-        const player = props.playerDataList[i];
-        result[i % 4].push(player);
-      }
-      return result;
+      isAccordionOpen: false,
     });
 
     const toggleAccordion = () => {
       state.isAccordionOpen = !state.isAccordionOpen;
     }
 
+    const getCoursePlayerList = (course: string) => props.priorityedPlayerDataList.filter(e => e.r3Status.fixedCourse == course);
+
     return {
-      state,
       props,
-      setList,
+      state,
       toggleAccordion,
+      getCoursePlayerList,
       convertRankNumberToText,
       getNamePlateColorCode,
       getWinnedStateLabelStyle,
