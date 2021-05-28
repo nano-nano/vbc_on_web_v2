@@ -82,7 +82,7 @@ const convertCsvToPlayerDataListInner = (rawStr: string) => {
         firstStepStatus: WinnedState.UNDEFINED,
         secondStepPoints: 0,
         secondStepMisses: 0,
-        secondStepAnswerd: '',
+        secondStepAnswered: '',
         secondStepStatus: WinnedState.UNDEFINED
       } as ExRoundEntity,
       sfStatus: {
@@ -90,7 +90,8 @@ const convertCsvToPlayerDataListInner = (rawStr: string) => {
         points: 0,
         misses: 0,
         answered: ['', '', ''],
-        status: WinnedState.UNDEFINED
+        status: WinnedState.UNDEFINED,
+        losedSetNo: 99
       } as SemiFinalEntity,
       fStatus: {
         set: createFinalSetEntities(),

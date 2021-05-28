@@ -76,9 +76,18 @@ export interface ExRoundEntity {
     /** Second Step: 誤答数 */
     secondStepMisses: number;
     /** Second Step: 正誤履歴文字列 */
-    secondStepAnswerd: string;
+    secondStepAnswered: string;
     /** Second Step: 解答者ステータス */
     secondStepStatus: string;
+}
+
+/**
+ * 敗者復活1st Stepの進捗を格納するエンティティ
+ */
+export interface ExRoundFirstStepProgress {
+    questionCount: number;
+    answered: string;
+    remainedCount: number;
 }
 
 /**
@@ -95,6 +104,8 @@ export interface SemiFinalEntity {
     answered: string[];
     /** 解答者ステータス */
     status: string;
+    /** 敗退したセット番号 */
+    losedSetNo: number;
 }
 
 /**
