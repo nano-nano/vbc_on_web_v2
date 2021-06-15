@@ -1,3 +1,11 @@
+export enum Rounds {
+    ROUND_2,
+    ROUND_3,
+    EX_ROUND,
+    SEMI_FINAL,
+    FINAL,
+}
+
 /**
  * 勝ち抜け状態
  */

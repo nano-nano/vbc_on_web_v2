@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/luxon": "^1.27.0",
+    "luxon": "^1.27.0",
     "semantic-ui-css": "^2.4.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"

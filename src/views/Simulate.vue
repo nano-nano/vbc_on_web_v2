@@ -8,12 +8,17 @@
       <!-- ファイルインポート -->
       <CsvImportView :isFileLoaded="state.isCsvFileLoaded" @onFileSelected="onImportFileSelected" />
       
+      <!-- 結果表示 -->
       <div id="results" v-if="state.isCsvFileLoaded">
         <Round2View :playerDataList="state.playerDataList" />
         <Round3View :courseOrder="state.r3CourseOrder" :priorityedPlayerDataList="state.r3PriorityedPlayerDataList" />
         <ExRoundView :playerDataList="state.playerDataList" :firstStepProgress="state.exFirstStepProgress" />
         <SemiFinalView :setPlayerDataList="state.sfSetPlayerDataList" />
         <FinalView :setPlayerDataList="state.fSetPlayerDataList" />
+      </div>
+      <!-- 追加操作 -->
+      <div id="additional" v-if="state.isCsvFileLoaded">
+        <AdditionalOperationView :vbcLogList="state.vbcLogList" />
       </div>
     </div>
   </div>
@@ -29,22 +34,15 @@ import Round3View from '@/components/Simulate/Round3View.vue';
 import ExRoundView from '@/components/Simulate/ExRoundView.vue';
 import SemiFinalView from '@/components/Simulate/SemiFinalView.vue';
 import FinalView from '@/components/Simulate/FinalView.vue';
+import AdditionalOperationView from '@/components/Simulate/AdditionalOperationView.vue';
 
 import { ExRoundFirstStepProgress, PlayerEntity } from '@/vbc-entity';
-import { Round3CourseArray } from "@/vbc-state";
+import { Round3CourseArray, Rounds } from "@/vbc-state";
 import { Round2Logic } from '@/logic/rounds/round2-logic';
 import { Round3Logic } from '@/logic/rounds/round3-logic';
 import { ExRoundLogic } from '@/logic/rounds/ex-round-logic';
 import { SemiFinalLogic } from '@/logic/rounds/semi-final-logic';
 import { FinalLogic } from '@/logic/rounds/final-logic';
-
-enum Rounds {
-  ROUND_2,
-  ROUND_3,
-  EX_ROUND,
-  SEMI_FINAL,
-  FINAL,
-}
 
 export default defineComponent({
   components: {
@@ -55,6 +53,7 @@ export default defineComponent({
     ExRoundView,
     SemiFinalView,
     FinalView,
+    AdditionalOperationView,
   },
   setup() {
     const state = reactive<{
@@ -134,6 +133,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #content {
+  margin: 20px 0;
+}
+#additional {
   margin: 20px 0;
 }
 </style>
