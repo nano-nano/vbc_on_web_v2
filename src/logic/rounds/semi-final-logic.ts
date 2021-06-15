@@ -15,98 +15,98 @@ const operatePlayOff = (playerA: PlayerEntity, playerB: PlayerEntity) => {
     }
   }
   
-  const operateSet = (setNo: number, players: PlayerEntity[], roundLog: string) => {
-    let time = 0; // 経過時間（秒）
-    while (time < 5 * 60) { // 5分
-      const result = QuizResultUtils.operateQuiz(players);
-      if (result.pushedPlayerIndex == -1) {
-        // 問題スルー
-        time += Random.getRandomArbitrary(7.5 - 4, 7.5 + 4);
-        roundLog += `（スルー）\n`;
-        continue;
-      } else if (players[result.pushedPlayerIndex].sfStatus.status != WinnedState.UNDEFINED) {
-        // その解答者が既に勝ち抜け or 敗退している
-        continue;
-      } else {
-        // 誰かが解答権を得ている
-        time += Random.getRandomArbitrary(7.5 - 4, 7.5 + 4);
-        roundLog += `${players[result.pushedPlayerIndex].name} `;
-        if (setNo == 1) {
-          // 第1セット: 正解で+1, 誤答で-1
-          if (result.isCorrected) {
-            // 正解した
-            roundLog += `${AnswerState.CORRECT} `;
-            players[result.pushedPlayerIndex].sfStatus.points += 1;
-            players[result.pushedPlayerIndex].sfStatus.answered[0] += AnswerState.CORRECT;
-          } else {
-            // 誤答した
-            roundLog += `${AnswerState.INCORRECT} `;
-            players[result.pushedPlayerIndex].sfStatus.misses += 1;
-            players[result.pushedPlayerIndex].sfStatus.answered[0] += AnswerState.INCORRECT;
-          }
-        } else if (setNo == 2) {
-          // 第2セット: 正解で+1, 誤答で-2
-          if (result.isCorrected) {
-            // 正解した
-            roundLog += `${AnswerState.CORRECT} `;
-            players[result.pushedPlayerIndex].sfStatus.points += 1;
-            players[result.pushedPlayerIndex].sfStatus.answered[1] += AnswerState.CORRECT;
-          } else {
-            // 誤答した
-            roundLog += `${AnswerState.INCORRECT} `;
-            players[result.pushedPlayerIndex].sfStatus.misses += 2;
-            players[result.pushedPlayerIndex].sfStatus.answered[1]+= AnswerState.INCORRECT;
-          }
-        } else {
-          // 第2セット: 正解で+2, 誤答で-2
-          if (result.isCorrected) {
-            // 正解した
-            roundLog += `${AnswerState.CORRECT} `;
-            players[result.pushedPlayerIndex].sfStatus.points += 2;
-            players[result.pushedPlayerIndex].sfStatus.answered[2] += AnswerState.CORRECT;
-          } else {
-            // 誤答した
-            roundLog += `${AnswerState.INCORRECT} `;
-            players[result.pushedPlayerIndex].sfStatus.misses += 2;
-            players[result.pushedPlayerIndex].sfStatus.answered[2] += AnswerState.INCORRECT;
-          }
-        }
-        roundLog += '\n';
-      }
-    }
-    roundLog += `（制限時間終了）\n`;
-  
-    const sortedPlayersInSet = players
-      .filter((player) => player.sfStatus.status == WinnedState.UNDEFINED)
-      .sort((playerA, playerB) => {
-        const playerAscore = playerA.sfStatus.points - playerA.sfStatus.misses;
-        const playerBscore = playerB.sfStatus.points - playerB.sfStatus.misses;
-          if (playerAscore != playerBscore) return (playerBscore - playerAscore); // （正解ポイント - 誤答ポイント）多い順
-          return operatePlayOff(playerA, playerB); // プレーオフ
-      });
-  
-    // 上位1人が勝ち抜け
-    if (setNo == 1) {
-      sortedPlayersInSet[0].sfStatus.status = WinnedState.FIRST_WINNED;
-    } else if (setNo == 2) {
-      sortedPlayersInSet[0].sfStatus.status = WinnedState.SECOND_WINNED;
+const operateSet = (setNo: number, players: PlayerEntity[], roundLog: string) => {
+  let time = 0; // 経過時間（秒）
+  while (time < 5 * 60) { // 5分
+    const result = QuizResultUtils.operateQuiz(players);
+    if (result.pushedPlayerIndex == -1) {
+      // 問題スルー
+      time += Random.getRandomArbitrary(7.5 - 4, 7.5 + 4);
+      roundLog += `（スルー）\n`;
+      continue;
+    } else if (players[result.pushedPlayerIndex].sfStatus.status != WinnedState.UNDEFINED) {
+      // その解答者が既に勝ち抜け or 敗退している
+      continue;
     } else {
-      sortedPlayersInSet[0].sfStatus.status = WinnedState.THIRD_WINNED;
+      // 誰かが解答権を得ている
+      time += Random.getRandomArbitrary(7.5 - 4, 7.5 + 4);
+      roundLog += `${players[result.pushedPlayerIndex].name} `;
+      if (setNo == 1) {
+        // 第1セット: 正解で+1, 誤答で-1
+        if (result.isCorrected) {
+          // 正解した
+          roundLog += `${AnswerState.CORRECT} `;
+          players[result.pushedPlayerIndex].sfStatus.points += 1;
+          players[result.pushedPlayerIndex].sfStatus.answered[0] += AnswerState.CORRECT;
+        } else {
+          // 誤答した
+          roundLog += `${AnswerState.INCORRECT} `;
+          players[result.pushedPlayerIndex].sfStatus.misses += 1;
+          players[result.pushedPlayerIndex].sfStatus.answered[0] += AnswerState.INCORRECT;
+        }
+      } else if (setNo == 2) {
+        // 第2セット: 正解で+1, 誤答で-2
+        if (result.isCorrected) {
+          // 正解した
+          roundLog += `${AnswerState.CORRECT} `;
+          players[result.pushedPlayerIndex].sfStatus.points += 1;
+          players[result.pushedPlayerIndex].sfStatus.answered[1] += AnswerState.CORRECT;
+        } else {
+          // 誤答した
+          roundLog += `${AnswerState.INCORRECT} `;
+          players[result.pushedPlayerIndex].sfStatus.misses += 2;
+          players[result.pushedPlayerIndex].sfStatus.answered[1]+= AnswerState.INCORRECT;
+        }
+      } else {
+        // 第2セット: 正解で+2, 誤答で-2
+        if (result.isCorrected) {
+          // 正解した
+          roundLog += `${AnswerState.CORRECT} `;
+          players[result.pushedPlayerIndex].sfStatus.points += 2;
+          players[result.pushedPlayerIndex].sfStatus.answered[2] += AnswerState.CORRECT;
+        } else {
+          // 誤答した
+          roundLog += `${AnswerState.INCORRECT} `;
+          players[result.pushedPlayerIndex].sfStatus.misses += 2;
+          players[result.pushedPlayerIndex].sfStatus.answered[2] += AnswerState.INCORRECT;
+        }
+      }
+      roundLog += '\n';
     }
-    roundLog += `${sortedPlayersInSet[0].name} => ${sortedPlayersInSet[0].sfStatus.status}\n`;
-  
-    // 下位2人が敗退
-    sortedPlayersInSet[sortedPlayersInSet.length - 1].sfStatus.status = WinnedState.LOSED;
-    sortedPlayersInSet[sortedPlayersInSet.length - 1].sfStatus.losedSetNo = setNo;
-    if (sortedPlayersInSet.length != 8) {
-      // 参加人数が8人の場合は2人目を決めない
-      sortedPlayersInSet[sortedPlayersInSet.length - 2].sfStatus.status = WinnedState.LOSED;
-      sortedPlayersInSet[sortedPlayersInSet.length - 2].sfStatus.losedSetNo = setNo;
-    }
-    roundLog += `${sortedPlayersInSet[sortedPlayersInSet.length - 1].name}, ${sortedPlayersInSet[sortedPlayersInSet.length - 2].name} => ${WinnedState.LOSED}\n`;
-  
-    return roundLog;
   }
+  roundLog += `（制限時間終了）\n`;
+
+  const sortedPlayersInSet = players
+    .filter((player) => player.sfStatus.status == WinnedState.UNDEFINED)
+    .sort((playerA, playerB) => {
+      const playerAscore = playerA.sfStatus.points - playerA.sfStatus.misses;
+      const playerBscore = playerB.sfStatus.points - playerB.sfStatus.misses;
+        if (playerAscore != playerBscore) return (playerBscore - playerAscore); // （正解ポイント - 誤答ポイント）多い順
+        return operatePlayOff(playerA, playerB); // プレーオフ
+    });
+
+  // 上位1人が勝ち抜け
+  if (setNo == 1) {
+    sortedPlayersInSet[0].sfStatus.status = WinnedState.FIRST_WINNED;
+  } else if (setNo == 2) {
+    sortedPlayersInSet[0].sfStatus.status = WinnedState.SECOND_WINNED;
+  } else {
+    sortedPlayersInSet[0].sfStatus.status = WinnedState.THIRD_WINNED;
+  }
+  roundLog += `${sortedPlayersInSet[0].name} => ${sortedPlayersInSet[0].sfStatus.status}\n`;
+
+  // 下位2人が敗退
+  sortedPlayersInSet[sortedPlayersInSet.length - 1].sfStatus.status = WinnedState.LOSED;
+  sortedPlayersInSet[sortedPlayersInSet.length - 1].sfStatus.losedSetNo = setNo;
+  if (sortedPlayersInSet.length != 8) {
+    // 参加人数が8人の場合は2人目を決めない
+    sortedPlayersInSet[sortedPlayersInSet.length - 2].sfStatus.status = WinnedState.LOSED;
+    sortedPlayersInSet[sortedPlayersInSet.length - 2].sfStatus.losedSetNo = setNo;
+  }
+  roundLog += `${sortedPlayersInSet[sortedPlayersInSet.length - 1].name}, ${sortedPlayersInSet[sortedPlayersInSet.length - 2].name} => ${WinnedState.LOSED}\n`;
+
+  return roundLog;
+}
 
 export class SemiFinalLogic {
     

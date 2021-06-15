@@ -2,7 +2,7 @@
   <div>
     <div class="ui accordion styled fluid">
       <div class="title" :class="{ active: state.isAccordionOpen }" @click="toggleAccordion">
-        <i class="dropdown icon" />【Semi Final: 3セット制タイムレース Nine Hundred】
+        <i class="dropdown icon" />【Final: トリプルセブン】
       </div>
       <div class="content fade" :class="{ active: state.isAccordionOpen }">
         <div v-for="(players, setIdx) in setPlayerDataList" :key="setIdx">
@@ -17,32 +17,35 @@
               <!-- ペーパー順位 -->
               <tr class="center aligned">
                 <td v-for="(player, playerIdx) in players" :key="playerIdx">
-                  <small v-show="isNeedShowPlayer((setIdx + 1), player)">{{ convertRankNumberToText(player) }}</small>
+                  <small>{{ convertRankNumberToText(player) }}</small>
                 </td>
               </tr>
               <!-- 所属 -->
               <tr class="center aligned">
                 <td v-for="(player, playerIdx) in players" :key="playerIdx">
-                  <small v-show="isNeedShowPlayer((setIdx + 1), player)">{{ player.belonging }}</small>
+                  <small>{{ player.belonging }}</small>
                 </td>
               </tr>
               <!-- 名前 -->
               <tr class="center aligned">
-                <td v-for="(player, playerIdx) in players" :key="playerIdx" :style="{ backgroundColor: getNamePlateColorCode(player, isNeedShowPlayer((setIdx + 1), player)) }">
-                  <strong class="vertical-writing" v-show="isNeedShowPlayer((setIdx + 1), player)">{{ player.name }}</strong>
+                <td v-for="(player, playerIdx) in players" :key="playerIdx" :style="{ backgroundColor: getNamePlateColorCode(player) }">
+                  <strong class="vertical-writing" >{{ player.name }}</strong>
                 </td>
               </tr>
               <!-- 正誤記録 -->
               <tr class="center aligned">
                 <td v-for="(player, playerIdx) in players" :key="playerIdx">
-                  <small v-show="isNeedShowPlayer((setIdx + 1), player)">{{ player.sfStatus.answered[setIdx] }}</small>
+                  <small>{{ player.fStatus.set[setIdx].answered }}</small>
                 </td>
               </tr>
               <!-- 状態 -->
               <tr class="center aligned">
                 <td v-for="(player, playerIdx) in players" :key="playerIdx">
-                  <small :class="getWinnedStateLabelStyle(player.sfStatus.status)" v-show="isNeedShowPlayer((setIdx + 1), player)">
-                    {{ player.sfStatus.status }}
+                  <small :class="getWinnedStateLabelStyle(player.sfStatus.status)">
+                    {{ player.fStatus.set[setIdx].status }}
+                    <span v-if="player.fStatus.set[setIdx].status == WinnedState.NON_ORDER_WINNED">
+                      {{ getWinnedStateAppendlabel(player) }}
+                    </span>
                   </small>
                 </td>
               </tr>
@@ -62,49 +65,38 @@ import { NamePlateUtils, WinnedStateUtils } from '@/logic/common-logic';
 import { WinnedState } from '@/vbc-state';
 
 const convertRankNumberToText = (player: PlayerEntity) => NamePlateUtils.convertRankNumberToText(player.paperRank);
-const getNamePlateColorCode = (player: PlayerEntity, isNeedShow: boolean) => {
-  if (!isNeedShow) return ''; // 表示の必要が無い場合は背景に色を付けない
-  return NamePlateUtils.getBgColorCode(player.paperRank)
-};
+const getNamePlateColorCode = (player: PlayerEntity) => NamePlateUtils.getBgColorCode(player.paperRank);
 const getWinnedStateLabelStyle = (state: string) => WinnedStateUtils.getWinnedStateLabelStyle(state);
+const getWinnedStateAppendlabel = (player: PlayerEntity) => {
+  return `${player.fStatus.nSeven}★ ` + ((player.fStatus.nSeven == 3) ? ' ⇒ 優勝！' : '');
+};
 
 export default defineComponent({
   props: {
     setPlayerDataList: {
-      type: Array as PropType<PlayerEntity[][]>,
+      type: Array as PropType<PlayerEntity[]>,
       required: true
     }
   },
   setup(props) {
     const state = reactive({
       /** Accordionが開いているかどうか */
-      isAccordionOpen: false,
+      isAccordionOpen: true,
     });
-
-    const isNeedShowPlayer = (setNo: number, player: PlayerEntity) => {
-      if (setNo == 2) {
-        if (player.sfStatus.status == WinnedState.FIRST_WINNED) return false;
-        if (player.sfStatus.losedSetNo < 2) return false;
-      } else if (setNo == 3) {
-        if (player.sfStatus.status == WinnedState.FIRST_WINNED || player.sfStatus.status == WinnedState.SECOND_WINNED) return false;
-        if (player.sfStatus.losedSetNo < 3) return false;
-      }
-      return true;
-    }
-
 
     const toggleAccordion = () => {
       state.isAccordionOpen = !state.isAccordionOpen;
     }
 
     return {
+      WinnedState,
       state,
       props,
-      isNeedShowPlayer,
       toggleAccordion,
       convertRankNumberToText,
       getNamePlateColorCode,
       getWinnedStateLabelStyle,
+      getWinnedStateAppendlabel
     }
   }
 });

@@ -13,6 +13,7 @@
         <Round3View :courseOrder="state.r3CourseOrder" :priorityedPlayerDataList="state.r3PriorityedPlayerDataList" />
         <ExRoundView :playerDataList="state.playerDataList" :firstStepProgress="state.exFirstStepProgress" />
         <SemiFinalView :setPlayerDataList="state.sfSetPlayerDataList" />
+        <FinalView :setPlayerDataList="state.fSetPlayerDataList" />
       </div>
     </div>
   </div>
@@ -27,19 +28,22 @@ import Round2View from '@/components/Simulate/Round2View.vue';
 import Round3View from '@/components/Simulate/Round3View.vue';
 import ExRoundView from '@/components/Simulate/ExRoundView.vue';
 import SemiFinalView from '@/components/Simulate/SemiFinalView.vue';
+import FinalView from '@/components/Simulate/FinalView.vue';
 
 import { ExRoundFirstStepProgress, PlayerEntity } from '@/vbc-entity';
+import { Round3CourseArray } from "@/vbc-state";
 import { Round2Logic } from '@/logic/rounds/round2-logic';
 import { Round3Logic } from '@/logic/rounds/round3-logic';
 import { ExRoundLogic } from '@/logic/rounds/ex-round-logic';
 import { SemiFinalLogic } from '@/logic/rounds/semi-final-logic';
-import { Round3CourseArray } from "@/vbc-state";
+import { FinalLogic } from '@/logic/rounds/final-logic';
 
 enum Rounds {
   ROUND_2,
   ROUND_3,
   EX_ROUND,
   SEMI_FINAL,
+  FINAL,
 }
 
 export default defineComponent({
@@ -50,6 +54,7 @@ export default defineComponent({
     Round3View,
     ExRoundView,
     SemiFinalView,
+    FinalView,
   },
   setup() {
     const state = reactive<{
@@ -65,7 +70,10 @@ export default defineComponent({
       r3PriorityedPlayerDataList: PlayerEntity[],
       /** ExRound 1st step経過配列 */
       exFirstStepProgress: ExRoundFirstStepProgress[],
+      /** SemiFinal セットごとの結果 */
       sfSetPlayerDataList: PlayerEntity[][],
+      /** Final セットごとの結果 */
+      fSetPlayerDataList: PlayerEntity[][],
     }>({
       isCsvFileLoaded: false,
       playerDataList: [],
@@ -74,6 +82,7 @@ export default defineComponent({
       r3PriorityedPlayerDataList: [],
       exFirstStepProgress: [],
       sfSetPlayerDataList: [],
+      fSetPlayerDataList: [],
     });
     
     const onImportFileSelected = (entities: PlayerEntity[] | null): void => {
@@ -101,6 +110,11 @@ export default defineComponent({
         const sfResult = SemiFinalLogic.operateSemiFinal(state.playerDataList);
         state.sfSetPlayerDataList = sfResult.setResult;
         state.vbcLogList.push({ round: Rounds.SEMI_FINAL, log: sfResult.roundLog });
+
+        const fResult = FinalLogic.operateFinal(state.playerDataList);
+        state.fSetPlayerDataList = fResult.setResult;
+        state.vbcLogList.push({ round: Rounds.FINAL, log: fResult.roundLog });
+        
 
 
       } else {
