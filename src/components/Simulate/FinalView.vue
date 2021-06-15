@@ -81,7 +81,7 @@ export default defineComponent({
   setup(props) {
     const state = reactive({
       /** Accordionが開いているかどうか */
-      isAccordionOpen: true,
+      isAccordionOpen: false,
     });
 
     const toggleAccordion = () => {
