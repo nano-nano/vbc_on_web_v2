@@ -5,7 +5,7 @@
         <i class="dropdown icon" />【Extra Round: 敗者復活】
       </div>
       <div class="content fade" :class="{ active: state.isAccordionOpen }">
-        <table class="ui compact table">
+        <table class="ui compact table unstackable">
           <thead>
             <tr>
               <th colspan="3">First Step: 読み上げ筆記クイズ</th>

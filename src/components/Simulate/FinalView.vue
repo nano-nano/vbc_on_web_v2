@@ -6,7 +6,7 @@
       </div>
       <div class="content fade" :class="{ active: state.isAccordionOpen }">
         <div v-for="(players, setIdx) in setPlayerDataList" :key="setIdx">
-          <table class="ui compact table">
+          <table class="ui compact table unstackable">
             <thead>
               <tr>
                 <!-- Proxy objectの要素数をカウントするhack -->

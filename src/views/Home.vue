@@ -2,7 +2,7 @@
   <div>
     <div class="ui inverted vertical center aligned segment">
       <NavBar page="Home" />
-      <div id="hero" class="ui text container">
+      <div id="hero" class="ui container">
         <h1 class="ui inverted">abcをWeb上で（勝手に）開催</h1>
         <h2>学生早押しクイズ最高峰の大会を手軽にシミュレート</h2>
         <div class="ui huge primary button" @click="onClickStartBtn">はじめる<i class="right arrow icon" /></div>
@@ -52,6 +52,10 @@
           <p>
             <ul>
               <li>インスパイア元のクイズ大会「abc」やツール「vbc」とは無関係です。何かあっても問い合わせはしないようにお願いします。</li>
+              <li>
+                スマートフォンなど横幅の狭い画面でも動作はしますが、レイアウトが崩れます。
+                1200px以上の横幅のある画面での利用を推奨します。
+              </li>
               <li>
                 本プログラムを利用したことによる不具合や損害については一切の責任を負いません。
                 また、本プログラム利用者が本プログラムの利用を通じて他者に損害を与えた場合、利用者は、自らの責任において問題を解決するものとします。
@@ -108,7 +112,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #hero {
-  margin:120px 0;
+  width: 100%;
+  padding:120px 0;
+  background-image: url('../assets/hero.png');
+  background-size: cover;
+  background-position: center;
 }
 
 #content {

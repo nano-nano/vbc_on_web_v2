@@ -6,7 +6,7 @@
       </div>
       <div class="content fade" :class="{ active: state.isAccordionOpen }">
         <div v-for="(course, idx) in courseOrder" :key="idx">
-          <table class="ui compact table">
+          <table class="ui compact table unstackable">
             <thead>
               <tr>
                 <th colspan="5">コース{{ (idx + 1) }} : {{ course }}</th>

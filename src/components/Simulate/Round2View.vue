@@ -6,7 +6,7 @@
       </div>
       <div class="content fade" :class="{ active: state.isAccordionOpen }">
         <div v-for="(players, setIdx) in setList" :key="setIdx">
-          <table class="ui compact table">
+          <table class="ui compact table unstackable">
             <thead>
               <tr>
                 <th colspan="12">第{{ (setIdx + 1) }}セット</th>

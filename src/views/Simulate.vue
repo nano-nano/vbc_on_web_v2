@@ -24,10 +24,10 @@
       <!-- スクロールボタン -->
       <div class="additional">
         <button v-if="state.isCsvFileLoaded" class="circular ui icon button " @click="onTopScrollClicked">
-          トップへ<i class="icon arrow up"></i>
+          トップへ<i class="icon arrow up" />
         </button>
         <button v-if="state.isCsvFileLoaded" class="circular ui icon button " @click="onAdditionalScrollClicked">
-          追加操作へ<i class="icon arrow down"></i>
+          追加操作へ<i class="icon arrow down" />
         </button>
       </div>
     </div>
