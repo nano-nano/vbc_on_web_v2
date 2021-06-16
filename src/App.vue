@@ -20,8 +20,10 @@
 
 <style lang="scss">
 /** 全体のスクロール設定 */
-body {
-  overflow-y: scroll;
+html {
+  /* 画像保存時にレイアウトが崩れる対策 */
+  overflow: -moz-hidden-unscrollable;
+	overflow: hidden;
 }
 /** テーブル */
 table {

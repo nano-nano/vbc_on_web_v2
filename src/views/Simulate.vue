@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="ui inverted vertical center aligned segment">
+    <div id="simTop" class="ui inverted vertical center aligned segment">
       <NavBar page="Simulate" />
     </div>
 
@@ -18,7 +18,17 @@
       </div>
       <!-- 追加操作 -->
       <div id="additional" v-if="state.isCsvFileLoaded">
-        <AdditionalOperationView :vbcLogList="state.vbcLogList" />
+        <AdditionalOperationView :vbcLogList="state.vbcLogList" :onClickSaveImageButton="onSaveImageButtonClicked" />
+      </div>
+
+      <!-- スクロールボタン -->
+      <div class="additional">
+        <button v-if="state.isCsvFileLoaded" class="circular ui icon button " @click="onTopScrollClicked">
+          トップへ<i class="icon arrow up"></i>
+        </button>
+        <button v-if="state.isCsvFileLoaded" class="circular ui icon button " @click="onAdditionalScrollClicked">
+          追加操作へ<i class="icon arrow down"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -43,6 +53,9 @@ import { Round3Logic } from '@/logic/rounds/round3-logic';
 import { ExRoundLogic } from '@/logic/rounds/ex-round-logic';
 import { SemiFinalLogic } from '@/logic/rounds/semi-final-logic';
 import { FinalLogic } from '@/logic/rounds/final-logic';
+
+import html2canvas from 'html2canvas';
+import { DateTime } from 'luxon';
 
 export default defineComponent({
   components: {
@@ -122,10 +135,50 @@ export default defineComponent({
       }
     }
 
+    const onSaveImageButtonClicked = () => {
+      const target = document.querySelector('#results') as HTMLElement;
+      if (target == null) return;
+      html2canvas(target).then(canvas => {
+        canvas.toBlob(blob => {
+          const fileName = `vbc_result_${DateTime.local().toFormat('yyyyMMddHHmmss')}.png`;
+
+          if (window.navigator.msSaveBlob != undefined) {
+            // IEやEdgeの場合
+            window.navigator.msSaveOrOpenBlob(blob, fileName);
+          } else {
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.click();
+          }
+        });
+      });
+    }
+
+    const onTopScrollClicked = () => {
+      const target = document.querySelector('#simTop') as HTMLElement;
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    const onAdditionalScrollClicked = () => {
+      const target = document.querySelector('#additional') as HTMLElement;
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
     return {
       Rounds,
       state,
       onImportFileSelected,
+      onSaveImageButtonClicked,
+      onTopScrollClicked,
+      onAdditionalScrollClicked,
     };
   }
 });
@@ -137,5 +190,18 @@ export default defineComponent({
 }
 #additional {
   margin: 20px 0;
+}
+
+div.additional {
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+
+  button {
+    margin: 5px;
+  }
 }
 </style>

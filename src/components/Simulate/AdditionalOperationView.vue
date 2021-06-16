@@ -5,16 +5,16 @@
       <div class="ui form">
         <div class="field">
           <label>1問ログ</label>
-          <textarea style="resize: none;" readonly rows="6" v-model="state.formattedLog" />
+          <textarea style="resize: none;" readonly rows="8" v-model="state.formattedLog" />
         </div>
       </div>
       <div class="log buttons">
         <div class="ui button" v-if="isSupportClipboardCopy" @click="onCopyClicked">クリップボードにコピー</div>
-        <div class="ui button" :class="{ disabled: state.isSavingTxt }" @click="onSaveClicked">テキストファイルで保存</div>
+        <div class="ui button" :class="{ disabled: state.isSavingTxt }" @click="onSaveTextClicked">テキストファイルで保存</div>
       </div>
       <div class="ui divider" />
       <div class="log buttons">
-        <div class="ui button disabled">表示中の結果を画像で保存する</div>
+        <div class="ui button" @click="onSaveImageClicked">表示中の結果を画像で保存する</div>
       </div>
     </div>
   </div>
@@ -29,6 +29,10 @@ export default defineComponent({
   props: {
     vbcLogList: {
       type: Array as PropType<{ round: Rounds, log: string }[]>,
+      required: true
+    },
+    onClickSaveImageButton: {
+      type: Function as PropType<() => void>,
       required: true
     }
   },
@@ -51,29 +55,34 @@ export default defineComponent({
       });
     };
 
-  const onSaveClicked = () => {
-    state.isSavingTxt = true;
-    const blob = new Blob([state.formattedLog], { type: 'text/plain' });
-    const fileName = `vbc_result_${DateTime.local().toFormat('yyyyMMddHHmmss')}.txt`;
+    const onSaveTextClicked = () => {
+      state.isSavingTxt = true;
+      const blob = new Blob([state.formattedLog], { type: 'text/plain' });
+      const fileName = `vbc_result_${DateTime.local().toFormat('yyyyMMddHHmmss')}.txt`;
 
-    if (window.navigator.msSaveBlob != undefined) {
-      // IEやEdgeの場合
-      window.navigator.msSaveOrOpenBlob(blob, fileName);
-    } else {
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      link.click();
+      if (window.navigator.msSaveBlob != undefined) {
+        // IEやEdgeの場合
+        window.navigator.msSaveOrOpenBlob(blob, fileName);
+      } else {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.click();
+      }
+      state.isSavingTxt = false;
+    };
+
+    const onSaveImageClicked = () => {
+      props.onClickSaveImageButton();
     }
-    state.isSavingTxt = false;
-  };
 
     return {
       state,
       isSupportClipboardCopy,
       onCopyClicked,
-      onSaveClicked,
+      onSaveTextClicked,
+      onSaveImageClicked,
     }
   }
 });
