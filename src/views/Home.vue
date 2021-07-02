@@ -114,7 +114,7 @@ export default defineComponent({
 #hero {
   width: 100%;
   padding:120px 0;
-  background-image: url('../assets/hero.png');
+  background-image: url('../assets/hero.jpg');
   background-size: cover;
   background-position: center;
 }
