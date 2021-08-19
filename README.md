@@ -30,22 +30,46 @@ Copyright (c) 2020 Banno Takuya/Nano-Nano
 
 ## 開発者向け情報
 
-### Project setup
+### Dockerを使った開発環境構築
+
+ビルド環境を構築するための`Dockerfile`と`docker-compose.yml`を用意しています。
+
+#### 事前準備
+
+- Dockerをインストールし、Docker Composeが使えるようにしておく
+- ルートディレクトリで`Dockerfile`からイメージを作成する
+  - `$ docker build -t node-yarn .`
+
+#### 起動
+
+- `docker-compose.yml`でビルド環境を起動する
+  - `$ docker-compose up -d`
+- 起動したビルド環境へ接続する
+  - `$ docker exec -it vbc_on_web_v2 /bin/sh`
+
+#### 終了
+
+- `docker-compose.yml`でビルド環境を始末する
+  - `$ docker-compose down`
+
+### 各種コマンド
+
+#### プロジェクトセットアップ
 ```
 $ yarn install
 ```
 
-### Compiles and hot-reloads for development
+#### 開発サーバ起動
 ```
 $ yarn serve
 ```
 
-### Compiles and minifies for production
+#### プロダクションビルド
 ```
 $ yarn build
 ```
 
-### Lints and fixes files
+#### Lint
 ```
 $ yarn lint
 ```
